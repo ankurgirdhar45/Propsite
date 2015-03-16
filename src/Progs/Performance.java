@@ -33,22 +33,20 @@ public class Performance
 		
 		try
 		{
-		fin = new FileInputStream("performance.xls");
-		wb = new HSSFWorkbook(fin);
-		sh=wb.getSheetAt(0);
-		int lrow=sh.getLastRowNum();
-		ob = new Object[lrow+1][1];
-		for (int i=0;i<=lrow;i++)
-		{
-			row=sh.getRow(i);
-			cell=row.getCell(0);
-			ob[i][0]=cell.getStringCellValue();
-		}
-		}catch(IOException e){System.out.println("file kona mili");}
-		return ob;
-		
-		
-	}
+			fin = new FileInputStream("performance.xls");
+			wb = new HSSFWorkbook(fin);
+			sh=wb.getSheetAt(0);
+			int lrow=sh.getLastRowNum();
+			ob = new Object[lrow+1][1];
+			for (int i=1;i<=lrow;i++)
+			{
+				row=sh.getRow(i);
+				cell=row.getCell(0);
+				ob[i-1][0]=cell.getStringCellValue();
+			}
+		}catch(IOException e){System.out.println("Unable to Locate file");}
+		return ob;				
+	}	
 	
 	@Test(dataProvider="ipURLs")
 	public void checkPerformance(String url) throws InterruptedException
@@ -64,7 +62,6 @@ public class Performance
 		{
 			d.findElement(By.xpath("//input[@value='Re-run the test']"));
 		}catch(Exception E){System.out.println("kuch mila");}
-		System.out.println("loaded");
 		afterResult(d,url);
 	}
 	
@@ -72,44 +69,39 @@ public class Performance
 	{
 		List<WebElement> fv= d.findElements(By.xpath("//table[@id='tableResults']/tbody/tr[3]/td"));
 		List<WebElement> rv= d.findElements(By.xpath("//table[@id='tableResults']/tbody/tr[4]/td"));
-		System.out.println(fv.size() + "    " + rv.size());
 		try
 		{
-		/*	
-		FileInputStream filein = new FileInputStream("performance.xls");
-	    HSSFWorkbook workbookr = new HSSFWorkbook(filein);*/
-	    //HSSFSheet sheetr = workbookr.getSheetAt(1);
-	    sh=wb.getSheetAt(1);
-		int lrow=sh.getLastRowNum();
-	    row = sh.createRow(lrow+1);
-	    cell = row.createCell(0);
-	    cell.setCellValue(url);
-	    int n = 1;
-	    for (WebElement e : fv)
-	    {
-	    	cell = row.createCell(n);
-	    	cell.setCellValue(e.getText());
-	    	n+=1;
-	    }
-	    cell = row.createCell(n);
-	    cell.setCellValue(d.getCurrentUrl());
-	    row = sh.createRow(lrow+2);
-	    cell = row.createCell(0);
-	    cell.setCellValue("");
-	    n = 1;
-	    for (WebElement e : rv)
-	    {
-	    	cell = row.createCell(n);
-	    	cell.setCellValue(e.getText());
-	    	n+=1;
-	    }
-	    FileOutputStream fileout = new FileOutputStream("performance.xls");
-	    wb.write(fileout);    
-	    fileout.flush();
-	    fileout.close();
-	    fin.close();	
-	    d.close();
-		}catch(IOException E){System.out.println("File na mili");}
+			sh=wb.getSheetAt(1);
+			int lrow=sh.getLastRowNum();
+			row = sh.createRow(lrow+1);
+			cell = row.createCell(0);
+			cell.setCellValue(url);
+			int n = 1;
+			for (WebElement e : fv)
+			{
+				cell = row.createCell(n);
+				cell.setCellValue(e.getText());
+				n+=1;
+			}
+			cell = row.createCell(n);
+			cell.setCellValue(d.getCurrentUrl());
+			row = sh.createRow(lrow+2);
+			cell = row.createCell(0);
+			cell.setCellValue("");
+			n = 1;
+			for (WebElement e : rv)
+			{
+				cell = row.createCell(n);
+				cell.setCellValue(e.getText());
+				n+=1;
+			}
+			FileOutputStream fileout = new FileOutputStream("performance.xls");
+			wb.write(fileout);    
+			fileout.flush();
+			fileout.close();
+			fin.close();	
+			d.close();
+		}catch(IOException E){System.out.println("Unable to locate file");}
 	}
 }
 	

@@ -26,6 +26,6 @@ public class buffer
 	}
 	public void bar()
 	{
-		System.out.println("inside bar");
+		System.out.println("inside bar for master");
 	}
 }

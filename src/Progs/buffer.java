@@ -1,29 +1,31 @@
 package Progs;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
 
 
 public class buffer 
 {	
-	
+	@Test
+	public void getURLStatus()
+	{
+		int code=0;
+		HttpURLConnection connection;
+		String add = "https://www.proptiger.com/careers";
+		try
+		{
+		URL url = new URL(add);
+		
+		connection = (HttpURLConnection)url.openConnection();
+		connection.setRequestMethod("GET");
+		connection.setInstanceFollowRedirects(false);			//To disable redirects else 301 will also give 200
+		connection.connect();
+		code = connection.getResponseCode();
+		}catch(IOException E){System.err.println("oops either link is invalid or some error occured");}
+		System.out.println("code of " + add + " is " + code);
+	}
 }

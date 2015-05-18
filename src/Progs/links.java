@@ -24,8 +24,8 @@ import org.testng.annotations.Test;
 
 public class links 
 {
-	HttpURLConnection connection;
-	int code;
+	
+	boolean isfirsttime=true;
 	WebDriver d;
 	Object[][] ob;
 	FileInputStream fin;
@@ -62,8 +62,7 @@ public class links
 		}catch(IOException e){System.out.println("Unable to Locate file");}
 		return ob;				
 	}	
-	
-	
+
 	public List<String> findLinks(String url)
 	{
 		String lnk;
@@ -76,29 +75,31 @@ public class links
 			st.add(lnk);
 		}
 		System.out.println("Total number of links present on this page = " + links.size());
-		
 		return st;
 	}
 	
-	public void writeStatus(List<String> links)
+	public void writeStatus(String url,List<String> links)
 	{
-		int count=0,urlstatus;	
+		int count=0,urlstatus,lrow;	
 		try
 		{
 			sh=wb.getSheetAt(1);
-			int lrow=sh.getLastRowNum();
-			/*row = sh.createRow(lrow+1);
+			if(isfirsttime)
+			{
+				lrow=0;
+				isfirsttime=false;
+			}
+			else
+			lrow=sh.getLastRowNum();
+			row = sh.createRow(lrow+1);
 			cell = row.createCell(0);
-			cell.setCellValue(url);*/
-			//int urlstatus;
+			cell.setCellValue("List of links present on " + url);
 			for (String lnk : links)
 			{
-				//lnk=e.getAttribute("href");
-				//st.add(lnk);
-				row = sh.createRow(lrow+count+1);
+				row = sh.createRow(lrow+count+2);
 				urlstatus=getURLStatus(lnk);
-				cell = row.createCell(0);
-				cell2 = row.createCell(1);
+				cell = row.createCell(1);
+				cell2 = row.createCell(2);
 				if(urlstatus==200)
 				{
 					cell.setCellValue(lnk);
@@ -123,15 +124,16 @@ public class links
 		}catch(IOException E){System.out.println("Unable to locate file");}			
 	}
 	
-	
-	
 	public int getURLStatus(String add)
 	{
+		int code=0;
+		HttpURLConnection connection;
 		try
 		{
 		URL url = new URL(add);
 		connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("GET");
+		connection.setInstanceFollowRedirects(false);     //To disable redirects else 301 will also give 200
 		connection.connect();
 		code = connection.getResponseCode();
 		}catch(IOException E){System.err.println("oops either link is invalid or some error occured");}
@@ -149,7 +151,7 @@ public class links
 			return;
 		}
 		links = findLinks(url);
-		writeStatus(links);
+		writeStatus(url,links);
 		System.out.println("links for " + url + " are  done");
 	}
 	

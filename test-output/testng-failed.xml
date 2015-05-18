@@ -3,11 +3,11 @@
 <suite name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="Progs.Performance">
+      <class name="Progs.buffer">
         <methods>
-          <include name="afterResult"/>
+          <include name="getStatus"/>
         </methods>
-      </class> <!-- Progs.Performance -->
+      </class> <!-- Progs.buffer -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

@@ -14,6 +14,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -21,29 +23,38 @@ import org.testng.annotations.Test;
 
 public class Performance 
 {	
+	WebDriver d;
 	Object[][] ob;
 	FileInputStream fin;
 	HSSFWorkbook wb;
 	HSSFSheet sh;
 	HSSFCell cell;
 	HSSFRow row;
+	
+	@BeforeTest
+	public void init()
+	{
+		d=new FirefoxDriver();
+	}
+	
 	@DataProvider(name="ipURLs")
 	public Object[][] inputURLs()
 	{
-		
 		try
 		{
+			int i;
 			fin = new FileInputStream("performance.xls");
 			wb = new HSSFWorkbook(fin);
 			sh=wb.getSheetAt(0);
 			int lrow=sh.getLastRowNum();
-			ob = new Object[lrow+1][1];
-			for (int i=1;i<=lrow;i++)
+			ob = new Object[lrow][1];
+			for (i=1;i<=lrow;i++)
 			{
 				row=sh.getRow(i);
 				cell=row.getCell(0);
 				ob[i-1][0]=cell.getStringCellValue();
 			}
+		System.out.println("Total URLs to be tested = " + --i);
 		}catch(IOException e){System.out.println("Unable to Locate file");}
 		return ob;				
 	}	
@@ -51,17 +62,18 @@ public class Performance
 	@Test(dataProvider="ipURLs")
 	public void checkPerformance(String url) throws InterruptedException
 	{
-		WebDriver d = new FirefoxDriver();
 		d.get("http://www.webpagetest.org");
 		WebElement URL=d.findElement(By.id("url"));
+		URL.clear();
 		URL.sendKeys(url);
+		
 		WebElement startbutton = d.findElement(By.xpath("//input[@type='submit']"));
 		startbutton.click();
 		d.manage().timeouts().implicitlyWait(180, TimeUnit.SECONDS);
 		try
 		{
 			d.findElement(By.xpath("//input[@value='Re-run the test']"));
-		}catch(Exception E){System.out.println("kuch mila");}
+		}catch(Exception E){System.out.println("Re run test button not found");}
 		afterResult(d,url);
 	}
 	
@@ -99,9 +111,15 @@ public class Performance
 			wb.write(fileout);    
 			fileout.flush();
 			fileout.close();
-			fin.close();	
-			d.close();
+			fin.close();
+			System.out.println(url  + "   done");
 		}catch(IOException E){System.out.println("Unable to locate file");}
+	}
+	
+	@AfterTest
+	public void browserClose()
+	{
+		d.close();
 	}
 }
 	

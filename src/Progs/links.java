@@ -1,0 +1,162 @@
+package Progs;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class links 
+{
+	HttpURLConnection connection;
+	int code;
+	WebDriver d;
+	Object[][] ob;
+	FileInputStream fin;
+	HSSFWorkbook wb;
+	HSSFSheet sh;
+	HSSFCell cell,cell2;
+	HSSFRow row;
+	
+	@BeforeTest
+	public void init()
+	{
+		d = new FirefoxDriver();
+		d.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+	}
+	
+	@DataProvider(name="ipURLs")
+	public Object[][] inputURLs()
+	{
+		try
+		{
+			int i;
+			fin = new FileInputStream("links.xls");
+			wb = new HSSFWorkbook(fin);
+			sh=wb.getSheetAt(0);
+			int lrow=sh.getLastRowNum();
+			ob = new Object[lrow][1];
+			for (i=1;i<=lrow;i++)
+			{
+				row=sh.getRow(i);
+				cell=row.getCell(0);
+				ob[i-1][0]=cell.getStringCellValue();
+			}
+		System.out.println("Total URLs for which links will be derived = " + --i);
+		}catch(IOException e){System.out.println("Unable to Locate file");}
+		return ob;				
+	}	
+	
+	
+	public List<String> findLinks(String url)
+	{
+		String lnk;
+		d.get(url);
+		List<WebElement> links = d.findElements(By.tagName("a"));
+		List<String>  st= new ArrayList<String>();
+		for (WebElement e : links)
+		{
+			lnk=e.getAttribute("href");
+			st.add(lnk);
+		}
+		System.out.println("Total number of links present on this page = " + links.size());
+		
+		return st;
+	}
+	
+	public void writeStatus(List<String> links)
+	{
+		int count=0,urlstatus;	
+		try
+		{
+			sh=wb.getSheetAt(1);
+			int lrow=sh.getLastRowNum();
+			/*row = sh.createRow(lrow+1);
+			cell = row.createCell(0);
+			cell.setCellValue(url);*/
+			//int urlstatus;
+			for (String lnk : links)
+			{
+				//lnk=e.getAttribute("href");
+				//st.add(lnk);
+				row = sh.createRow(lrow+count+1);
+				urlstatus=getURLStatus(lnk);
+				cell = row.createCell(0);
+				cell2 = row.createCell(1);
+				if(urlstatus==200)
+				{
+					cell.setCellValue(lnk);
+					cell2.setCellValue(urlstatus);
+					System.out.println(count + 1 + ". " + lnk + "   " + urlstatus);
+				}
+				else
+				{
+					cell.setCellValue(lnk);
+					cell2.setCellValue(urlstatus);
+					System.err.println(count + 1 + ". " + lnk + "    " + urlstatus);					
+				}
+				
+				count++;
+			}			
+			FileOutputStream fileout = new FileOutputStream("links.xls");
+			wb.write(fileout);    
+			fileout.flush();
+			fileout.close();
+			fin.close();
+			
+		}catch(IOException E){System.out.println("Unable to locate file");}			
+	}
+	
+	
+	
+	public int getURLStatus(String add)
+	{
+		try
+		{
+		URL url = new URL(add);
+		connection = (HttpURLConnection)url.openConnection();
+		connection.setRequestMethod("GET");
+		connection.connect();
+		code = connection.getResponseCode();
+		}catch(IOException E){System.err.println("oops either link is invalid or some error occured");}
+		return code;
+	}
+	
+	@Test(dataProvider="ipURLs")
+	public void getLinksStatus(String url)
+	{
+		List<String> links = new ArrayList<String>();
+		System.out.println("Finding links for " + url);
+		if(getURLStatus(url)!=200)
+		{
+			System.err.println(url + " is not valid URL, it is giving status " + getURLStatus(url));
+			return;
+		}
+		links = findLinks(url);
+		writeStatus(links);
+		System.out.println("links for " + url + " are  done");
+	}
+	
+	@AfterTest
+	public void closeBrowser()
+	{
+		d.close();
+		d.quit();
+	}
+}

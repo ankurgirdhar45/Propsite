@@ -41,6 +41,13 @@ public class links
 		d.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 	
+	@AfterTest
+	public void closeBrowser()
+	{
+		d.close();
+		d.quit();
+	}
+	
 	@DataProvider(name="ipURLs")
 	public Object[][] inputURLs()
 	{
@@ -155,10 +162,5 @@ public class links
 		System.out.println("links for " + url + " are  done");
 	}
 	
-	@AfterTest
-	public void closeBrowser()
-	{
-		d.close();
-		d.quit();
-	}
+	
 }

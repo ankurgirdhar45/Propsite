@@ -74,6 +74,10 @@ public class links
 	{
 		String lnk;
 		d.get(url);
+		try
+		{
+		Thread.sleep(5000);
+		}catch(InterruptedException E){System.out.println("waiting exception");}
 		List<WebElement> links = d.findElements(By.tagName("a"));
 		List<String>  st= new ArrayList<String>();
 		for (WebElement e : links)

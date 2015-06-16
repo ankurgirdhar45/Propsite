@@ -1,22 +1,18 @@
 package Progs;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 //comment
@@ -41,8 +37,67 @@ public class buffer
 			System.out.println(e.getAttribute("href") + "text is " + e.getText());
 		}
 	}*/
+	//@Test
+	public void buffer1()
+	{
+		//d=new FirefoxDriver();
+		//d.get("https://www.proptiger.com");
+		//d.findElement(By.xpath("//body")).sendKeys(Keys.CONTROL + "t");
+		System.setProperty("webdriver.chrome.driver", "chromedriver");
+		d=new ChromeDriver();
+		d.get("http://www.proptiger.com");
+		try{
+		Thread.sleep(5000);
+		}catch(InterruptedException E){System.out.println("kuch bhi");}
+		//get title
+		String title = d.getTitle();
+		System.out.println(title);
+		WebElement e = d.findElement(By.cssSelector("meta[name='description']"));
+		System.out.println(e.getAttribute("content"));
+		e = d.findElement(By.cssSelector("meta[name='keywords']"));
+		System.out.println(e.getAttribute("content"));
+		System.out.println(d.findElement(By.tagName("H1")).getText());
+		System.out.println(d.findElement(By.tagName("H2")).getText());
+		
+		List<WebElement> images= d.findElements(By.tagName("img"));
+		for (WebElement f : images)
+		{
+			String alttext = (f.getAttribute("alt"));
+			if (alttext.isEmpty())
+			System.err.println("No alt text found for image " + f.getAttribute("src"));
+			else
+			System.out.println(alttext);
+		}
+		
+		
+		
+		
+		
+		JavascriptExecutor jse = (JavascriptExecutor)d;
+		jse.executeScript("window.scrollTo(0,document.body.scrollHeight)");
+		try{
+			Thread.sleep(2000);
+			}catch(InterruptedException E){System.out.println("kuch bhi");}
+		jse.executeScript("window.scrollTo(0,document.body.scrollHeight)");
+			
+		try{
+			Thread.sleep(2000);
+			}catch(InterruptedException E){System.out.println("kuch bhi");}
+		
+		jse.executeScript("window.scrollTo(0,0)");
+		try{
+			Thread.sleep(2000);
+			}catch(InterruptedException E){System.out.println("kuch bhi");}
+	
+	d.close();
+	}	
 	
 	
 	
-	
+	public void buffer2()
+	{
+		d=new FirefoxDriver();
+		d.get("https://www.proptiger.com/pune/kumar-urban-kruti-wadgaon-sheri-5000162/3bhk-3t-1368-sqft-apartment");
+		d.findElement(By.xpath("//"));
+	}
 }

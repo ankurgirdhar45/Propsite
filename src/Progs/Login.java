@@ -17,6 +17,7 @@ public class Login
 {
 	WebDriverWait wait;
 	WebDriver driver;
+	String URL = "https://www.proptiger.com";
 	
 	@BeforeClass
 		public void init()
@@ -30,11 +31,11 @@ public class Login
 		public void gSignIn()
 		{
 			driver.manage().deleteAllCookies();
-			driver.get("https://www.proptiger.com");
+			driver.get(URL);
 			//wait for sign in text to appear
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[class='topMenuLinkBtn']")));
 			driver.findElement(By.cssSelector("div[class='topMenuLinkBtn']")).click();
-			
+			//wait.until(ExpectedConditions.)
 			
 			//wait for Google sign in button to appear
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[class='btn-google']")));
@@ -101,13 +102,20 @@ public class Login
 			driver.switchTo().window(driver.getWindowHandles().toArray()[0].toString());
 			validateLogin();
 		}
-	
+
+		
+//		SSHUser=sysadmin
+//				SSHHost=54.255.59.216
+//				SSHLocalPort=3312
+//				SSHRemoteHost=127.0.0.1
+//				SSHRemotePort=3306
+
 		
 	@Test	
 	public void signup()
 	{
 		driver.manage().deleteAllCookies();
-		driver.get("https://beta.proptiger-ws.com");
+		driver.get(URL);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[class='topMenuLinkBtn']")));
 		driver.findElement(By.cssSelector("div[class='topMenuLinkBtn']")).click();
 	
@@ -139,12 +147,7 @@ public class Login
 	{
 		Assert.assertTrue(driver.findElement(By.xpath("//div[@class='dropdown-toggle topMenuLinkBtn ng-binding']")).getText()=="DUMMY");
 	}
-	//@AfterClass
-	public void closeWindow()
-	{
-		driver.close();
-		driver.quit();
-	}
+	
 
 	
 	
@@ -167,6 +170,14 @@ public class Login
 			System.out.println("User logged in by normal username and password, test case paxssed");
 		}
 	}
+	
+	
+	//@AfterClass
+		public void closeWindow()
+		{
+			driver.close();
+			driver.quit();
+		}
 	
 	
 }

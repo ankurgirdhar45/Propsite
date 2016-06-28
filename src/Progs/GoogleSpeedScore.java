@@ -13,7 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -30,7 +30,8 @@ public class GoogleSpeedScore
 	@BeforeTest
 	public void init()
 	{
-		d = new FirefoxDriver();
+		d = new ChromeDriver();
+		System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 		d.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 	

@@ -12,7 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.Test;
 
 //comment
 
@@ -36,7 +36,7 @@ public class buffer
 			System.out.println(e.getAttribute("href") + "text is " + e.getText());
 		}
 	}*/
-	//@Test
+	@Test
 	public void buffer1()
 	{
 		//d=new FirefoxDriver();
@@ -95,7 +95,8 @@ public class buffer
 	
 	public void buffer2()
 	{
-		d=new FirefoxDriver();
+		d=new ChromeDriver();
+		System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 		d.get("https://www.proptiger.com/pune/kumar-urban-kruti-wadgaon-sheri-5000162/3bhk-3t-1368-sqft-apartment");
 		d.findElement(By.xpath("//"));
 	}
